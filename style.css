@@ -1,288 +1,1181 @@
-:root {
-  color-scheme: dark;
-  --bg: #08090b;
-  --panel: #111216;
-  --panel-soft: #17191e;
-  --line: #2a2c32;
-  --text: #f3f3f4;
-  --muted: #8d9098;
-  --accent: #f0f0f0;
-  --danger: #ff5353;
-  --like: #67b7ff;
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
-* { box-sizing: border-box; }
+:root {
+    --bg: #0a0a1a;
+    --panel: rgba(15, 20, 45, 0.85);
+    --panel-soft: rgba(25, 30, 55, 0.7);
+    --line: rgba(100, 180, 255, 0.08);
+    --text: #e0e8f0;
+    --muted: #7a8aa0;
+    --accent: #4fc3f7;
+    --accent2: #7c4dff;
+    --danger: #ff6b6b;
+    --shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
+    --radius: 12px;
+    --font: 'Segoe UI', 'Tahoma', sans-serif;
+    /* НОВЫЙ ЗЕЛЁНЫЙ АКЦЕНТ */
+    --green-accent: #00cc66;
+    --green-accent2: #00994d;
+}
 
 body {
-  min-width: 320px;
-  min-height: 100vh;
-  margin: 0;
-  padding: 24px 12px;
-  background:
-    radial-gradient(circle at 15% 0%, rgba(255,255,255,.055), transparent 28rem),
-    var(--bg);
-  color: var(--text);
-  font-family: "Trebuchet MS", Tahoma, sans-serif;
+    min-height: 100vh;
+    padding: 16px;
+    background: var(--bg);
+    background-image: url('https://fortport.ru/photo/25467');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
 }
 
-button, input, textarea { font: inherit; }
-button { -webkit-tap-highlight-color: transparent; }
+/* ============================================================
+   ЗАГРУЗОЧНЫЙ ЭКРАН
+   ============================================================ */
 
-.box {
-  position: relative;
-  width: min(100%, 680px);
-  min-height: 420px;
-  margin: 0 auto;
-  overflow: visible;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  background: rgba(17, 18, 22, .98);
-  box-shadow: 0 28px 80px rgba(0, 0, 0, .46);
+#loadingScreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    transition: opacity 0.8s ease;
+}
+#loadingScreen.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+#loadingScreen img {
+    width: auto;
+    height: 80px;
+    object-fit: contain;
+    animation: pulse 1s ease-in-out infinite;
+}
+@keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.1); opacity: 1; }
 }
 
-.profile-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px;
-  border-bottom: 1px solid var(--line);
+/* ============================================================
+   ЛОГОТИП В УГЛУ
+   ============================================================ */
+
+.corner-logo {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    z-index: 1000;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+.corner-logo:hover {
+    transform: scale(1.05);
+}
+.corner-logo img {
+    height: 56px;
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 0 20px rgba(0, 204, 102, 0.1));
 }
 
-.avatar, .post-avatar, .comment-avatar, #profileBigAvatar {
-  object-fit: cover;
-  background: #25272d;
+/* ============================================================
+   КОНТЕЙНЕР
+   ============================================================ */
+
+.container {
+    width: min(100%, 720px);
+    margin: 0 auto;
+    background: var(--panel);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
 }
 
-.avatar {
-  width: 48px;
-  height: 48px;
-  flex: 0 0 auto;
-  border: 2px solid #3a3d45;
-  border-radius: 50%;
-  cursor: pointer;
-  transition: transform .16s ease, border-color .16s ease;
-}
-.avatar:hover { transform: scale(1.04); border-color: #727680; }
-.avatar-input { display: none; }
-.nick-wrap { position: relative; flex: 1; min-width: 0; }
+/* ============================================================
+   ШАПКА
+   ============================================================ */
 
-.nick-input, .comment-input {
-  width: 100%;
-  border: 1px solid var(--line);
-  outline: none;
-  background: #0c0d10;
-  color: var(--text);
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--line);
+    background: rgba(0, 0, 0, 0.2);
 }
-.nick-input {
-  height: 42px;
-  padding: 0 12px;
-  border-radius: 7px;
+.logo {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
 }
-.nick-input:focus, .comment-input:focus, .post-input:focus { border-color: #60636d; }
-.nick-input.error { border-color: var(--danger); }
-.nick-error-msg { display: none; margin-top: 5px; color: var(--danger); font-size: .72rem; }
-.nick-error-msg.visible { display: block; }
+.logo-text {
+    font-size: 18px;
+    font-weight: 300;
+    letter-spacing: 6px;
+    color: var(--green-accent);
+}
+.logo-sub {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 4px;
+}
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* ============================================================
+   УВЕДОМЛЕНИЯ
+   ============================================================ */
 
 .bell {
-  position: relative;
-  display: grid;
-  width: 42px;
-  height: 42px;
-  place-items: center;
-  border: 0;
-  background: transparent;
-  color: #b8bac1;
-  cursor: pointer;
+    position: relative;
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: all 0.2s ease;
+    /* ФОН КНОПКИ */
+    background-image: url('https://fortport.ru/photo/25751');
+    background-size: cover !important;
+    background-position: center !important;
 }
-.bell:hover { color: #fff; }
+.bell:hover {
+    border-color: var(--green-accent);
+}
+.bell-icon {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+}
 .bell-count {
-  position: absolute;
-  top: 0;
-  right: 0;
-  display: none;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 4px;
-  place-items: center;
-  border-radius: 20px;
-  background: var(--danger);
-  color: white;
-  font-size: .65rem;
-  font-weight: 700;
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    display: none;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 20px;
+    background: var(--danger);
+    color: white;
+    font-size: 9px;
+    font-weight: bold;
+    line-height: 18px;
+    text-align: center;
 }
-.bell-count.visible { display: grid; }
-
-.tabs { display: grid; grid-template-columns: repeat(3, 1fr); border-bottom: 1px solid var(--line); }
-.tabs button {
-  padding: 12px 6px;
-  border: 0;
-  border-bottom: 2px solid transparent;
-  background: transparent;
-  color: var(--muted);
-  cursor: pointer;
-  text-transform: lowercase;
+.bell-count.visible {
+    display: block;
 }
-.tabs button:hover { color: #d7d8dc; }
-.tabs button.active { border-bottom-color: var(--accent); color: white; }
 
-.section { display: none; padding: 14px; }
-.section.active { display: block; animation: reveal .16s ease-out; }
-@keyframes reveal { from { opacity: 0; transform: translateY(3px); } }
+/* ============================================================
+   ПРОФИЛЬ (АВАТАРЫ КВАДРАТНЫЕ)
+   ============================================================ */
 
+.avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 4px !important; /* Квадратные */
+    object-fit: cover;
+    cursor: pointer;
+    border: 2px solid rgba(0, 204, 102, 0.2);
+    transition: all 0.2s ease;
+}
+.avatar:hover {
+    border-color: var(--green-accent);
+    transform: scale(1.05);
+}
+.avatar-input {
+    display: none;
+}
+
+.post-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 4px !important;
+    object-fit: cover;
+}
+.comment-avatar {
+    width: 22px;
+    height: 22px;
+    border-radius: 4px !important;
+    object-fit: cover;
+}
+#profileBigAvatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 4px !important;
+    object-fit: cover;
+    border: 2px solid rgba(0, 204, 102, 0.1);
+}
+.friend-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 4px !important;
+    object-fit: cover;
+}
+.search-result-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 4px !important;
+    object-fit: cover;
+}
+.profile-avatar-wrap {
+    position: relative;
+    display: inline-block;
+}
+
+/* ============================================================
+   НИКНЕЙМ
+   ============================================================ */
+
+.nick-wrap {
+    flex: 1;
+}
+.nick-input {
+    width: 100%;
+    height: 30px;
+    padding: 0 12px;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    color: var(--text);
+    font-size: 12px;
+    outline: none;
+    transition: all 0.2s ease;
+}
+.nick-input:focus {
+    border-color: var(--green-accent);
+}
+.nick-input.error {
+    border-color: var(--danger);
+}
+.nick-error-msg {
+    display: none;
+    margin-top: 4px;
+    color: var(--danger);
+    font-size: 10px;
+}
+.nick-error-msg.visible {
+    display: block;
+}
+
+/* ============================================================
+   МЕНЮ (ВЕРТИКАЛЬНОЕ, СЛЕВА)
+   ============================================================ */
+
+.main-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 8px 12px;
+    background: rgba(0, 0, 0, 0.15);
+    border-right: 1px solid var(--line);
+    width: 140px;
+    float: left;
+    min-height: 300px;
+}
+.menu-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 14px;
+    border-radius: 6px;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+.menu-item:hover {
+    color: white;
+    background: rgba(0, 204, 102, 0.1);
+}
+.menu-item.active {
+    color: white;
+    background: rgba(0, 204, 102, 0.15);
+    border-color: rgba(0, 204, 102, 0.2);
+}
+.menu-label {
+    letter-spacing: 1px;
+}
+
+/* ============================================================
+   ВСЕ КНОПКИ С ФОНОМ
+   ============================================================ */
+
+.btn {
+    padding: 6px 18px;
+    border: 1px solid rgba(0, 204, 102, 0.2);
+    border-radius: 6px;
+    color: white;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    /* ФОН КНОПКИ */
+    background-image: url('https://fortport.ru/photo/25751');
+    background-size: cover !important;
+    background-position: center !important;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+.btn:hover {
+    background-image: url('https://fortport.ru/photo/25751');
+    background-size: cover !important;
+    background-position: center !important;
+    border-color: var(--green-accent);
+    box-shadow: 0 0 30px rgba(0, 204, 102, 0.1);
+}
+.btn:disabled {
+    opacity: 0.4;
+    cursor: wait;
+}
+
+/* ============================================================
+   КНОПКИ ПОСТОВ (ЛАЙК, ДИЗЛАЙК, КОММЕНТ)
+   ============================================================ */
+
+.vote-btn, .comment-btn {
+    padding: 4px 10px;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 11px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.vote-btn:hover, .comment-btn:hover {
+    background: rgba(0, 204, 102, 0.05);
+    color: white;
+}
+.vote-btn img, .comment-btn img {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+}
+.vote-btn.liked {
+    color: var(--green-accent);
+}
+.vote-btn.disliked {
+    color: var(--danger);
+}
+
+/* ============================================================
+   ПОЛЯ ВВОДА
+   ============================================================ */
+
+.search-input, .comment-input, .post-input, .chat-input {
+    background: rgba(0, 0, 0, 0.15);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    color: var(--text);
+    outline: none;
+    transition: all 0.2s ease;
+}
+.search-input:focus, .comment-input:focus, .post-input:focus, .chat-input:focus {
+    border-color: var(--green-accent);
+}
+
+/* ============================================================
+   АВАТАРКИ В ПОСТАХ
+   ============================================================ */
+
+.post-avatar, .comment-avatar, .friend-avatar, .search-result-avatar {
+    border: 1px solid rgba(0, 204, 102, 0.1);
+}
+
+/* ============================================================
+   ОСТАЛЬНЫЕ ЭЛЕМЕНТЫ БЕЗ ИЗМЕНЕНИЙ
+   ============================================================ */
+
+.content {
+    margin-left: 140px;
+    padding: 12px 16px;
+    min-height: 400px;
+}
+.section {
+    display: none;
+}
+.section.active {
+    display: block;
+    animation: fadeIn 0.2s ease;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+}
+.section-header h2 {
+    font-size: 14px;
+    font-weight: 300;
+    letter-spacing: 2px;
+    color: var(--text);
+}
+.section-count {
+    font-size: 11px;
+    color: var(--muted);
+}
+.posts-list {
+    display: grid;
+    gap: 10px;
+    background: rgba(0, 0, 0, 0.75);
+    border-radius: 8px;
+    padding: 12px;
+}
 .notif-panel {
-  position: absolute;
-  z-index: 20;
-  top: 68px;
-  right: 14px;
-  display: none;
-  width: min(360px, calc(100% - 28px));
-  max-height: 340px;
-  overflow: auto;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: #14161a;
-  box-shadow: 0 18px 50px rgba(0,0,0,.55);
+    display: none;
+    position: absolute;
+    z-index: 20;
+    top: 60px;
+    right: 20px;
+    width: min(320px, calc(100% - 40px));
+    max-height: 280px;
+    overflow: auto;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--panel);
+    backdrop-filter: blur(16px);
+    box-shadow: var(--shadow);
 }
-.notif-item { padding: 10px; border-bottom: 1px solid #27292f; font-size: .83rem; line-height: 1.35; }
-.notif-item:last-child { border-bottom: 0; }
-.notif-time { display: block; margin-top: 3px; color: #70737b; font-size: .68rem; }
-
-.create-post { position: relative; }
+.notif-item {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--line);
+    font-size: 11px;
+}
+.notif-item:last-child {
+    border-bottom: none;
+}
+.notif-time {
+    display: block;
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: 9px;
+}
+.post-card {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--panel-soft);
+    overflow: hidden;
+    transition: all 0.2s ease;
+}
+.post-card:hover {
+    border-color: rgba(0, 204, 102, 0.15);
+}
+.post-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 14px;
+    border-bottom: 1px solid var(--line);
+}
+.post-nick {
+    font-weight: 600;
+    font-size: 11px;
+}
+.post-time {
+    margin-left: auto;
+    color: var(--muted);
+    font-size: 9px;
+}
+.delete-post-btn {
+    width: 24px;
+    height: 24px;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    border-radius: 4px;
+}
+.delete-post-btn:hover {
+    color: var(--danger);
+    background: rgba(255, 107, 107, 0.05);
+}
+.post-text {
+    padding: 10px 14px;
+    font-size: 12px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+}
+.post-media {
+    display: grid;
+    gap: 2px;
+}
+.post-media img, .post-media video {
+    width: 100%;
+    max-height: 400px;
+    object-fit: contain;
+}
+.post-footer {
+    display: flex;
+    gap: 4px;
+    padding: 6px 12px;
+    border-top: 1px solid var(--line);
+}
+.comments-section {
+    display: none;
+    padding: 0 14px 14px;
+    border-top: 1px solid var(--line);
+}
+.comment {
+    display: flex;
+    gap: 10px;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--line);
+}
+.comment-nick {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--green-accent);
+}
+.comment-text {
+    font-size: 11px;
+}
+.comment-input-row {
+    display: flex;
+    gap: 8px;
+    padding-top: 8px;
+}
+.comment-input {
+    flex: 1;
+    height: 30px;
+    padding: 0 12px;
+    border-radius: 6px;
+}
+.add-comment-btn {
+    padding: 4px 12px;
+    font-size: 10px;
+}
+.create-post {
+    position: relative;
+}
 .post-input {
-  display: block;
-  width: 100%;
-  min-height: 120px;
-  resize: vertical;
-  padding: 12px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  outline: none;
-  background: #0c0d10;
-  color: var(--text);
-  line-height: 1.45;
+    width: 100%;
+    min-height: 100px;
+    padding: 12px 14px;
+    border-radius: 8px;
+    resize: vertical;
+}
+.create-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
 }
 .attach-btn {
-  width: 44px;
-  height: 44px;
-  margin: 8px 0;
-  padding: 3px;
-  border: 1px solid var(--line);
-  border-radius: 7px;
-  background: #181a1f;
-  cursor: pointer;
+    width: 34px;
+    height: 34px;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: all 0.2s ease;
+    /* ФОН КНОПКИ */
+    background-image: url('https://fortport.ru/photo/25751');
+    background-size: cover !important;
+    background-position: center !important;
 }
-.attach-btn img { width: 32px; height: 32px; object-fit: contain; }
-.upload-status { min-height: 17px; margin: 2px 0 8px; color: var(--muted); font-size: .72rem; }
-.btn {
-  padding: 9px 16px;
-  border: 1px solid #4b4e57;
-  border-radius: 7px;
-  background: #eeeeef;
-  color: #111216;
-  font-weight: 700;
-  cursor: pointer;
+.attach-btn:hover {
+    border-color: var(--green-accent);
 }
-.btn:hover { background: white; }
-.btn:disabled { opacity: .55; cursor: wait; }
-
-.media-preview { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-.preview-item { position: relative; width: 108px; }
-.preview-item img, .preview-item video { width: 108px; height: 82px; object-fit: cover; border-radius: 6px; background: #090a0c; }
-.preview-size { overflow: hidden; color: var(--muted); font-size: .62rem; text-overflow: ellipsis; white-space: nowrap; }
+.attach-btn img {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+}
+.upload-status {
+    flex: 1;
+    color: var(--muted);
+    font-size: 10px;
+}
+.publish-btn {
+    background-image: url('https://fortport.ru/photo/25751');
+    background-size: cover !important;
+    background-position: center !important;
+    border-color: rgba(0, 204, 102, 0.2);
+}
+.publish-btn:hover {
+    background-image: url('https://fortport.ru/photo/25751');
+    background-size: cover !important;
+    background-position: center !important;
+    border-color: var(--green-accent);
+}
+.media-preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+.preview-item {
+    position: relative;
+    width: 90px;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+}
+.preview-item img, .preview-item video {
+    width: 90px;
+    height: 68px;
+    object-fit: cover;
+}
+.preview-size {
+    padding: 4px 8px;
+    font-size: 9px;
+    color: var(--muted);
+    background: rgba(0, 0, 0, 0.2);
+}
 .remove-media {
-  position: absolute;
-  top: -6px;
-  right: -6px;
-  width: 21px;
-  height: 21px;
-  padding: 0;
-  border: 0;
-  border-radius: 50%;
-  background: var(--danger);
-  color: white;
-  cursor: pointer;
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 18px;
+    height: 18px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 107, 107, 0.6);
+    color: white;
+    font-size: 10px;
+    cursor: pointer;
 }
-
-.posts-list { display: grid; gap: 12px; }
-.empty-posts { padding: 42px 12px; color: var(--muted); text-align: center; }
-.post-card { overflow: hidden; border: 1px solid var(--line); border-radius: 9px; background: #131419; }
-.post-header { display: flex; align-items: center; gap: 9px; padding: 10px; }
-.post-avatar { width: 34px; height: 34px; border-radius: 50%; }
-.post-nick { min-width: 0; overflow: hidden; font-size: .86rem; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
-.post-time { margin-left: auto; color: #777a83; font-size: .66rem; white-space: nowrap; }
-.delete-post-btn {
-  display: grid;
-  width: 30px;
-  height: 30px;
-  margin-left: 2px;
-  padding: 0;
-  place-items: center;
-  border: 0;
-  background: transparent;
-  color: #73767e;
-  cursor: pointer;
+.search-container {
+    padding: 4px 0;
 }
-.delete-post-btn:hover { color: var(--danger); }
-.post-text { padding: 2px 12px 12px; overflow-wrap: anywhere; font-size: .92rem; line-height: 1.48; white-space: pre-wrap; }
-.post-media { display: grid; gap: 2px; background: #07080a; }
-.post-media img, .post-media video { display: block; width: 100%; max-height: 620px; object-fit: contain; background: #07080a; }
-.media-loading { display: grid; min-height: 180px; place-items: center; color: var(--muted); font-size: .75rem; }
-.post-footer { display: flex; gap: 6px; padding: 8px 10px; border-top: 1px solid var(--line); }
-.vote-btn, .comment-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 5px 8px;
-  border: 0;
-  border-radius: 6px;
-  background: transparent;
-  color: #92959d;
-  cursor: pointer;
+.search-tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 10px;
 }
-.vote-btn:hover, .comment-btn:hover { background: #1e2026; color: white; }
-.vote-btn.liked { color: var(--like); }
-.vote-btn.disliked { color: var(--danger); }
-
-.comments-section { display: none; padding: 0 10px 10px; border-top: 1px solid var(--line); }
-.comment { display: flex; gap: 8px; padding: 10px 0; border-bottom: 1px solid #23252b; }
-.comment-avatar { width: 28px; height: 28px; flex: 0 0 auto; border-radius: 50%; }
-.comment-content { min-width: 0; }
-.comment-nick { font-size: .74rem; font-weight: 700; }
-.comment-text { margin-top: 2px; overflow-wrap: anywhere; color: #d1d2d6; font-size: .8rem; line-height: 1.4; white-space: pre-wrap; }
-.comment-input-row { display: flex; gap: 7px; padding-top: 10px; }
-.comment-input { flex: 1; min-width: 0; height: 34px; padding: 0 9px; border-radius: 6px; }
-.add-comment-btn { padding: 4px 9px; font-size: .72rem; }
-
-.profile-info { padding: 8px 0 18px; text-align: center; }
-#profileBigAvatar { width: 92px; height: 92px; border: 2px solid #3a3d45; border-radius: 50%; }
-.profile-info h3 { margin: 8px 0 0; }
-.profile-info p { margin: 12px 0 0; color: var(--muted); }
-
+.search-tab {
+    padding: 4px 14px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 10px;
+    transition: all 0.2s ease;
+}
+.search-tab:hover {
+    color: white;
+}
+.search-tab.active {
+    border-color: rgba(0, 204, 102, 0.2);
+    color: white;
+}
+.search-box {
+    display: flex;
+    gap: 8px;
+}
+.search-btn {
+    width: 34px;
+    height: 34px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: rgba(0, 0, 0, 0.1);
+    color: var(--muted);
+    cursor: pointer;
+    /* ФОН КНОПКИ */
+    background-image: url('https://fortport.ru/photo/25751');
+    background-size: cover !important;
+    background-position: center !important;
+}
+.search-btn:hover {
+    border-color: var(--green-accent);
+}
+.search-results {
+    margin-top: 12px;
+}
+.search-result-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 14px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    margin-bottom: 6px;
+    background: var(--panel-soft);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.search-result-item:hover {
+    border-color: rgba(0, 204, 102, 0.08);
+}
+.search-result-nick {
+    font-weight: 600;
+    font-size: 11px;
+}
+.search-result-status {
+    font-size: 9px;
+    color: var(--muted);
+}
+.search-result-status.online { color: #4caf50; }
+.search-result-post {
+    padding: 10px 14px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    margin-bottom: 6px;
+    background: var(--panel-soft);
+    cursor: pointer;
+}
+.search-result-post:hover {
+    border-color: rgba(0, 204, 102, 0.08);
+}
+.search-result-post .post-author {
+    font-weight: 600;
+    color: var(--green-accent);
+}
+.search-result-post .post-content {
+    margin-top: 4px;
+    font-size: 11px;
+}
+.search-result-post .post-date {
+    margin-top: 4px;
+    font-size: 9px;
+    color: var(--muted);
+}
+.friends-list {
+    display: grid;
+    gap: 6px;
+}
+.friend-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 14px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: var(--panel-soft);
+}
+.friend-nick {
+    font-weight: 600;
+    font-size: 11px;
+}
+.friend-status {
+    font-size: 9px;
+    color: var(--muted);
+}
+.friend-status.online { color: #4caf50; }
+.friend-actions {
+    display: flex;
+    gap: 4px;
+}
+.friend-actions button {
+    padding: 2px 10px;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 9px;
+}
+.friend-actions button:hover {
+    background: rgba(0, 204, 102, 0.04);
+}
+.friend-actions .remove-friend {
+    border-color: rgba(255, 107, 107, 0.1);
+    color: var(--danger);
+}
+.friend-actions .remove-friend:hover {
+    background: rgba(255, 107, 107, 0.05);
+}
+.profile-info {
+    text-align: center;
+    padding: 16px 0 20px;
+}
+.profile-info h3 {
+    margin-top: 10px;
+    font-size: 16px;
+    font-weight: 300;
+    letter-spacing: 2px;
+}
+.profile-info p {
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: 10px;
+}
+.chat-modal {
+    display: none;
+    position: fixed;
+    z-index: 100;
+    bottom: 20px;
+    right: 20px;
+    width: 340px;
+    max-width: calc(100% - 40px);
+    max-height: 460px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--panel);
+    backdrop-filter: blur(16px);
+    box-shadow: var(--shadow);
+    flex-direction: column;
+}
+.chat-modal.open {
+    display: flex;
+    animation: slideUp 0.25s ease;
+}
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(16px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.chat-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 16px;
+    border-bottom: 1px solid var(--line);
+}
+.chat-header span {
+    font-size: 12px;
+    font-weight: 300;
+}
+.close-chat {
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 16px;
+}
+.close-chat:hover { color: var(--danger); }
+.chat-messages {
+    flex: 1;
+    padding: 12px;
+    overflow-y: auto;
+    min-height: 180px;
+    max-height: 260px;
+    background: rgba(0, 0, 0, 0.1);
+}
+.chat-message {
+    margin-bottom: 6px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    background: var(--panel-soft);
+    max-width: 80%;
+}
+.chat-message.mine {
+    margin-left: auto;
+    background: rgba(0, 204, 102, 0.06);
+}
+.chat-message .msg-nick { font-size: 9px; color: var(--muted); }
+.chat-message .msg-text { font-size: 11px; }
+.chat-message .msg-time { font-size: 8px; color: var(--muted); display: block; margin-top: 2px; }
+.chat-input-row {
+    display: flex;
+    gap: 8px;
+    padding: 8px 16px;
+    border-top: 1px solid var(--line);
+}
+.chat-input {
+    flex: 1;
+    height: 32px;
+    padding: 0 12px;
+    border-radius: 6px;
+}
+.footer {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 20px;
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 9px;
+    letter-spacing: 1px;
+}
 .toast {
-  position: fixed;
-  z-index: 50;
-  right: 18px;
-  bottom: 18px;
-  max-width: min(360px, calc(100% - 36px));
-  padding: 11px 14px;
-  border: 1px solid #34363e;
-  border-radius: 8px;
-  background: #191b20;
-  box-shadow: 0 15px 45px rgba(0,0,0,.45);
-  font-size: .82rem;
-  animation: toast-in .18s ease-out;
+    position: fixed;
+    z-index: 50;
+    right: 20px;
+    bottom: 20px;
+    max-width: min(320px, calc(100% - 40px));
+    padding: 10px 16px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--panel);
+    backdrop-filter: blur(16px);
+    box-shadow: var(--shadow);
+    font-size: 11px;
+    animation: slideUp 0.25s ease;
 }
-.toast.error { border-color: #6c3030; color: #ffc6c6; }
-@keyframes toast-in { from { opacity: 0; transform: translateY(8px); } }
+.toast.error {
+    border-color: rgba(255, 107, 107, 0.1);
+    color: #ffb3b3;
+}
+
+/* ============================================================
+   СТЕПАША
+   ============================================================ */
+
+#stepaWrapper {
+    position: fixed;
+    bottom: 16px;
+    left: 16px;
+    z-index: 999;
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+}
+.stepa-gif {
+    width: 120px !important;
+    height: 120px !important;
+    object-fit: contain;
+    image-rendering: pixelated;
+    border: none !important;
+    background: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    border-radius: 0 !important;
+    transition: transform 0.2s ease;
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+}
+#stepaWrapper:hover .stepa-gif {
+    transform: scale(1.05);
+}
+
+.stepa-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 400px;
+    width: calc(100% - 40px);
+    max-height: 80vh;
+    overflow-y: auto;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: rgba(10, 15, 40, 0.92);
+    backdrop-filter: blur(20px);
+    box-shadow: var(--shadow);
+}
+.stepa-modal.open {
+    display: block;
+    animation: fadeIn 0.25s ease;
+}
+.stepa-modal-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 16px;
+    border-bottom: 1px solid var(--line);
+}
+.stepa-modal-close {
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 16px;
+}
+.stepa-modal-close:hover { color: var(--danger); }
+.stepa-modal-body {
+    padding: 16px;
+}
+.stepa-phrase {
+    text-align: center;
+    font-size: 20px;
+    font-weight: 300;
+    padding: 8px;
+    margin-bottom: 14px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 6px;
+    letter-spacing: 2px;
+}
+.stepa-game-select {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 12px;
+}
+.stepa-game-btn {
+    flex: 1;
+    padding: 4px 8px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 9px;
+    letter-spacing: 1px;
+    background-image: url('https://fortport.ru/photo/25751');
+    background-size: cover !important;
+    background-position: center !important;
+}
+.stepa-game-btn:hover { color: white; border-color: var(--green-accent); }
+.stepa-game-btn.active {
+    border-color: var(--green-accent);
+    color: white;
+}
+.stepa-btns {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+.stepa-rps-btn {
+    width: 50px;
+    height: 50px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    padding: 4px;
+    background-image: url('https://fortport.ru/photo/25751');
+    background-size: cover !important;
+    background-position: center !important;
+}
+.stepa-rps-btn:hover {
+    border-color: var(--green-accent);
+}
+.stepa-rps-btn img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+.stepa-ttt {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+    max-width: 180px;
+    margin: 0 auto;
+}
+.stepa-ttt button {
+    aspect-ratio: 1;
+    background: rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    color: var(--text);
+    font-size: 1.4rem;
+    cursor: pointer;
+    background-image: url('https://fortport.ru/photo/25751');
+    background-size: cover !important;
+    background-position: center !important;
+}
+.stepa-ttt button:hover {
+    border-color: var(--green-accent);
+}
+.stepa-checkers-board {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 0;
+    max-width: 220px;
+    margin: 0 auto;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    overflow: hidden;
+}
+.stepa-checkers-board button {
+    aspect-ratio: 1;
+    cursor: pointer;
+    border: none;
+    padding: 2px;
+}
+.stepa-checkers-board .white-cell { background: rgba(200, 210, 230, 0.04); }
+.stepa-checkers-board .black-cell { background: rgba(0, 0, 0, 0.2); }
+.stepa-checkers-board .selected { box-shadow: inset 0 0 0 3px var(--green-accent); }
+.stepa-checkers-board .capture-hint { box-shadow: inset 0 0 0 3px #00ff00; }
+.stepa-piece-img {
+    width: 85%;
+    height: 85%;
+    object-fit: contain;
+}
+.stepa-checkers-settings {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin: 6px 0 10px;
+    font-size: 9px;
+    color: var(--muted);
+}
+.stepa-checkers-settings select {
+    background: rgba(0, 0, 0, 0.1);
+    color: var(--text);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 2px 8px;
+}
+.stepa-status {
+    padding: 8px 12px;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 6px;
+    margin-top: 8px;
+}
+.stepa-bot-say { font-size: 10px; color: var(--muted); }
+.stepa-result { font-size: 13px; font-weight: 300; margin-top: 2px; }
+.stepa-reset {
+    margin-top: 8px;
+    padding: 6px 16px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+    font-size: 9px;
+    width: 100%;
+    background-image: url('https://fortport.ru/photo/25751');
+    background-size: cover !important;
+    background-position: center !important;
+}
+.stepa-reset:hover {
+    border-color: var(--green-accent);
+}
 
 @media (max-width: 520px) {
-  body { padding: 0; }
-  .box { min-height: 100vh; border: 0; border-radius: 0; }
-  .profile-row { padding: 11px; }
-  .section { padding: 10px; }
-  .post-time { display: none; }
+    body { padding: 0; }
+    .container { border-radius: 0; border: none; min-height: 100vh; }
+    .header { padding: 10px 14px; }
+    .logo-text { font-size: 14px; letter-spacing: 4px; }
+    .corner-logo img { height: 36px; }
+    .main-menu {
+        flex-direction: row;
+        width: 100%;
+        float: none;
+        border-right: none;
+        border-bottom: 1px solid var(--line);
+        padding: 4px 8px;
+        gap: 2px;
+        overflow-x: auto;
+        min-height: auto;
+    }
+    .menu-item { padding: 4px 10px; font-size: 9px; white-space: nowrap; }
+    .content { margin-left: 0; padding: 10px 12px; }
+    .section { padding: 4px 0; }
+    .posts-list { padding: 8px; }
+    .chat-modal { bottom: 0; right: 0; width: 100%; max-width: 100%; max-height: 100vh; border-radius: 0; }
+    .stepa-gif { width: 80px !important; height: 80px !important; }
+    .footer { font-size: 8px; padding: 6px 14px; flex-direction: column; align-items: center; gap: 4px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { scroll-behavior: auto !important; animation: none !important; transition: none !important; }
+    *, *::before, *::after { animation: none !important; transition: none !important; }
 }
